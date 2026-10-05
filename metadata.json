@@ -1,0 +1,6 @@
+{
+  "name": "Cerebrocentral - Edge SaaS Console & Migration Suite",
+  "description": "Cloudflare Edge architecture console, Next.js frontend, Python FastAPI backend, D1 database manager, and full free-tier migration suite for cerebrocentral.com.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

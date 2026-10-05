@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  --font-serif: "Times New Roman", Times, Georgia, Cambria, serif;
+}
+
+body {
+  background-color: #090A0C;
+  color: #F5F7FA;
+  font-family: var(--font-serif);
+  overflow-x: hidden;
+}
+
+/* Fine gradient hairline divider */
+.hairline-gradient-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(212, 217, 226, 0.35) 50%, transparent 100%);
+  width: 100%;
+}
+
+/* Continuous benefits marquee animation */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: 200%;
+  animation: marquee 28s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+    transform: none;
+  }
+}
