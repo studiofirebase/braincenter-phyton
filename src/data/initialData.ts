@@ -12,216 +12,17 @@ import {
   SprintStep
 } from '../types';
 
-export const INITIAL_USERS: D1User[] = [
-  {
-    id: 'user_123',
-    email: 'oradanigrindr@gmail.com',
-    name: 'Dani Grindr',
-    avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60',
-    password_hash: '$2b$12$e6nB4...hashed',
-    created_at: '2024-01-15 10:20:00',
-    updated_at: '2024-02-01 14:15:00',
-  },
-  {
-    id: 'user_studio',
-    email: 'studiofirebase@cerebrocentral.com',
-    name: 'Studio Firebase Admin',
-    avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=60',
-    password_hash: '$2b$12$k92mQ...hashed',
-    created_at: '2024-01-10 08:00:00',
-    updated_at: '2024-02-10 11:30:00',
-  },
-  {
-    id: 'user_analyst',
-    email: 'dev@cerebrocentral.com',
-    name: 'Cloud Engineer',
-    avatar_url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=60',
-    password_hash: '$2b$12$x43gZ...hashed',
-    created_at: '2024-02-12 09:45:00',
-    updated_at: '2024-02-12 09:45:00',
-  }
-];
+export const INITIAL_USERS: D1User[] = [];
+export const INITIAL_ORGANIZATIONS: D1Organization[] = [];
+export const INITIAL_MEMBERSHIPS: D1Membership[] = [];
+export const INITIAL_MEDIA: D1Media[] = [];
+export const INITIAL_INTEGRATIONS: D1Integration[] = [];
 
-export const INITIAL_ORGANIZATIONS: D1Organization[] = [
-  {
-    id: 'org_cerebro',
-    name: 'Cerebrocentral HQ',
-    slug: 'cerebrocentral-hq',
-    owner_id: 'user_123',
-    plan: 'free',
-    created_at: '2024-01-15 10:22:00',
-    updated_at: '2024-01-15 10:22:00',
-  },
-  {
-    id: 'org_edge_lab',
-    name: 'Cloudflare Edge Labs',
-    slug: 'edge-labs',
-    owner_id: 'user_studio',
-    plan: 'free',
-    created_at: '2024-02-01 15:30:00',
-    updated_at: '2024-02-01 15:30:00',
-  }
-];
+export const INITIAL_WEBHOOK_LOGS: D1WebhookLog[] = [];
 
-export const INITIAL_MEMBERSHIPS: D1Membership[] = [
-  {
-    id: 'mem_1',
-    user_id: 'user_123',
-    organization_id: 'org_cerebro',
-    role: 'owner',
-    created_at: '2024-01-15 10:22:00',
-  },
-  {
-    id: 'mem_2',
-    user_id: 'user_studio',
-    organization_id: 'org_cerebro',
-    role: 'admin',
-    created_at: '2024-01-16 11:00:00',
-  },
-  {
-    id: 'mem_3',
-    user_id: 'user_studio',
-    organization_id: 'org_edge_lab',
-    role: 'owner',
-    created_at: '2024-02-01 15:30:00',
-  }
-];
+export const INITIAL_KV_ENTRIES: KvEntry[] = [];
 
-export const INITIAL_MEDIA: D1Media[] = [
-  {
-    id: 'media_101',
-    organization_id: 'org_cerebro',
-    uploaded_by: 'user_123',
-    filename: 'architecture-diagram-edge.png',
-    mime_type: 'image/png',
-    size: 245890,
-    storage_path: 'uploads/2024/02/architecture-diagram-edge.png',
-    r2_key: 'cerebrocentral/media/architecture-diagram-edge.png',
-    visibility: 'public',
-    created_at: '2024-02-14 18:20:00',
-  },
-  {
-    id: 'media_102',
-    organization_id: 'org_cerebro',
-    uploaded_by: 'user_123',
-    filename: 'd1-database-backup.sqlite',
-    mime_type: 'application/x-sqlite3',
-    size: 1420500,
-    storage_path: 'backups/d1-database-backup.sqlite',
-    r2_key: 'cerebrocentral/backups/d1-database-backup.sqlite',
-    visibility: 'private',
-    created_at: '2024-02-15 03:00:00',
-  },
-  {
-    id: 'media_103',
-    organization_id: 'org_edge_lab',
-    uploaded_by: 'user_studio',
-    filename: 'cloudflare-workers-benchmark.pdf',
-    mime_type: 'application/pdf',
-    size: 618400,
-    storage_path: 'reports/cloudflare-workers-benchmark.pdf',
-    r2_key: 'cerebrocentral/reports/cloudflare-workers-benchmark.pdf',
-    visibility: 'public',
-    created_at: '2024-02-18 12:10:00',
-  }
-];
-
-export const INITIAL_INTEGRATIONS: D1Integration[] = [
-  {
-    id: 'int_stripe',
-    organization_id: 'org_cerebro',
-    provider: 'stripe',
-    access_token: 'rk_live_cf_stripe_51290382901...',
-    refresh_token: '',
-    expires_at: '2028-12-31 23:59:59',
-    metadata: '{"webhook_endpoint": "https://api.cerebrocentral.com/api/v1/webhooks/stripe", "events": ["checkout.session.completed"]}',
-    connected_at: '2024-01-20 14:00:00',
-    created_at: '2024-01-20 14:00:00',
-  },
-  {
-    id: 'int_whatsapp',
-    organization_id: 'org_cerebro',
-    provider: 'whatsapp',
-    access_token: 'EAAB...meta_wa_token',
-    refresh_token: '',
-    expires_at: '2025-06-30 00:00:00',
-    metadata: '{"phone_number_id": "10492849102", "webhook_url": "https://api.cerebrocentral.com/api/v1/webhooks/whatsapp"}',
-    connected_at: '2024-01-22 09:30:00',
-    created_at: '2024-01-22 09:30:00',
-  }
-];
-
-export const INITIAL_WEBHOOK_LOGS: D1WebhookLog[] = [
-  {
-    id: 'wh_log_001',
-    provider: 'stripe',
-    event_type: 'checkout.session.completed',
-    payload: '{"id": "cs_test_a1b2c3d4", "amount_total": 0, "currency": "usd", "customer_email": "user@example.com"}',
-    response_status: 200,
-    created_at: '2024-02-19 14:22:10',
-  },
-  {
-    id: 'wh_log_002',
-    provider: 'whatsapp',
-    event_type: 'messages.incoming',
-    payload: '{"from": "5511999998888", "text": {"body": "Verificacao de status da API Cerebrocentral"}}',
-    response_status: 200,
-    created_at: '2024-02-19 15:10:05',
-  }
-];
-
-export const INITIAL_KV_ENTRIES: KvEntry[] = [
-  {
-    key: 'api:v1:organizations',
-    namespace: 'CACHE',
-    value: '{"count": 2, "cached_at": "2024-02-20T12:00:00Z", "ttl": 300}',
-    ttlSeconds: 300,
-    expiresAt: '2026-10-05T10:05:00Z',
-    hits: 142,
-    createdAt: '2026-10-05T09:55:00Z',
-  },
-  {
-    key: 'user:user_123:profile',
-    namespace: 'CACHE',
-    value: '{"id": "user_123", "role": "owner", "plan": "free"}',
-    ttlSeconds: 600,
-    expiresAt: '2026-10-05T10:10:00Z',
-    hits: 89,
-    createdAt: '2026-10-05T09:50:00Z',
-  },
-  {
-    key: 'sess_fake_token_123',
-    namespace: 'SESSIONS',
-    value: '{"user_id": "user_123", "email": "oradanigrindr@gmail.com", "authenticated": true}',
-    ttlSeconds: 86400,
-    expiresAt: '2026-10-06T09:50:00Z',
-    hits: 37,
-    createdAt: '2026-10-05T09:50:00Z',
-  }
-];
-
-export const INITIAL_QUEUED_WEBHOOKS: QueuedWebhook[] = [
-  {
-    id: 'wh_q_901',
-    provider: 'stripe',
-    event_type: 'customer.subscription.created',
-    status: 'completed',
-    attempts: 1,
-    payload: { id: 'sub_123', plan: 'free_starter', customer: 'cus_89410' },
-    received_at: '2026-10-05T09:30:12Z',
-    processed_at: '2026-10-05T09:30:13Z',
-  },
-  {
-    id: 'wh_q_902',
-    provider: 'whatsapp',
-    event_type: 'message.received',
-    status: 'completed',
-    attempts: 1,
-    payload: { from: '+5511999887766', text: 'Healthcheck query' },
-    received_at: '2026-10-05T09:35:40Z',
-    processed_at: '2026-10-05T09:35:41Z',
-  }
-];
+export const INITIAL_QUEUED_WEBHOOKS: QueuedWebhook[] = [];
 
 export const API_ENDPOINTS: ApiEndpointDef[] = [
   {
@@ -242,8 +43,8 @@ export const API_ENDPOINTS: ApiEndpointDef[] = [
     summary: 'User login returning Bearer token and profile',
     category: 'Auth',
     defaultBody: {
-      email: 'oradanigrindr@gmail.com',
-      password: 'password123'
+      email: '',
+      password: ''
     }
   },
   {
@@ -265,17 +66,17 @@ export const API_ENDPOINTS: ApiEndpointDef[] = [
     path: '/api/v1/users/{user_id}',
     summary: 'Retrieve user account details by ID from D1',
     category: 'Users',
-    defaultParams: { user_id: 'user_123' }
+    defaultParams: { user_id: 'user-id' }
   },
   {
     method: 'PUT',
     path: '/api/v1/users/{user_id}',
     summary: 'Update user name or email record in D1',
     category: 'Users',
-    defaultParams: { user_id: 'user_123' },
+    defaultParams: { user_id: 'user-id' },
     defaultBody: {
-      name: 'Dani Grindr (Updated)',
-      email: 'oradanigrindr@gmail.com'
+      name: '',
+      email: ''
     }
   },
   {
@@ -290,9 +91,9 @@ export const API_ENDPOINTS: ApiEndpointDef[] = [
     summary: 'Provision a new organization record in D1',
     category: 'Organizations',
     defaultBody: {
-      name: 'Acme Edge Global',
-      slug: 'acme-edge',
-      plan: 'free'
+      name: '',
+      slug: '',
+      plan: ''
     }
   },
   {
@@ -301,9 +102,9 @@ export const API_ENDPOINTS: ApiEndpointDef[] = [
     summary: 'Stream file upload to Cloudflare R2 bucket with key generation',
     category: 'Media',
     defaultBody: {
-      filename: 'dashboard-preview.png',
-      size: 420800,
-      mime_type: 'image/png'
+      filename: '',
+      size: '',
+      mime_type: ''
     }
   },
   {
@@ -318,13 +119,12 @@ export const API_ENDPOINTS: ApiEndpointDef[] = [
     summary: 'Receive and queue Stripe payment webhook in Durable Object',
     category: 'Webhooks',
     defaultBody: {
-      id: 'evt_stripe_sim_01',
-      type: 'checkout.session.completed',
+      type: '',
       data: {
         object: {
-          customer_email: 'customer@domain.com',
-          amount: 0,
-          currency: 'usd'
+          customer_email: '',
+          amount: '',
+          currency: ''
         }
       }
     }
@@ -335,7 +135,7 @@ export const API_ENDPOINTS: ApiEndpointDef[] = [
     summary: 'Rotate JWT access token using valid refresh token',
     category: 'Auth',
     defaultBody: {
-      refresh_token: 'cf_ref_sample_token_abc123'
+      refresh_token: ''
     }
   },
   {
@@ -343,21 +143,21 @@ export const API_ENDPOINTS: ApiEndpointDef[] = [
     path: '/api/v1/organizations/{org_id}',
     summary: 'Inspect single organization and active team quota',
     category: 'Organizations',
-    defaultParams: { org_id: 'org_cerebro' }
+    defaultParams: { org_id: '' }
   },
   {
     method: 'GET',
     path: '/api/v1/media/{media_id}',
     summary: 'Retrieve metadata and signed URL for single R2 media file',
     category: 'Media',
-    defaultParams: { media_id: 'media_101' }
+    defaultParams: { media_id: '' }
   },
   {
     method: 'DELETE',
     path: '/api/v1/media/{media_id}',
     summary: 'Delete media object from Cloudflare R2 bucket and D1',
     category: 'Media',
-    defaultParams: { media_id: 'media_101' }
+    defaultParams: { media_id: '' }
   },
   {
     method: 'GET',
@@ -372,7 +172,7 @@ export const API_ENDPOINTS: ApiEndpointDef[] = [
     category: 'Integrations',
     defaultBody: {
       provider: 'instagram',
-      access_token: 'IGQVJ...token'
+      access_token: ''
     }
   },
   {
@@ -391,13 +191,7 @@ export const API_ENDPOINTS: ApiEndpointDef[] = [
     category: 'Webhooks',
     defaultBody: {
       object: 'instagram',
-      entry: [
-        {
-          id: 'ig_entry_01',
-          time: 1718901234,
-          messaging: [{ sender: { id: 'user_ig_01' }, message: { text: 'Inquiry via Instagram' } }]
-        }
-      ]
+      entry: []
     }
   }
 ];

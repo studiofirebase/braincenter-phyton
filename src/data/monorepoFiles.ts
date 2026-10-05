@@ -85,23 +85,7 @@ async def login(request: Request):
         if not email or not password:
             raise HTTPException(status_code=400, detail="Missing email or password")
 
-        # In production: Verify password hash from D1 users table or Supabase Auth
-        access_token = f"cf_jwt_{os.urandom(16).hex()}"
-        refresh_token = f"cf_ref_{os.urandom(24).hex()}"
-
-        # Write active session into KV SESSIONS namespace
-        return {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-            "token_type": "bearer",
-            "expires_in": 86400,
-            "user": {
-                "id": "user_123",
-                "email": email,
-                "name": "Dani Grindr",
-                "role": "owner"
-            }
-        }
+        raise HTTPException(status_code=501, detail="Identity provider is not configured")
     except HTTPException:
         raise
     except Exception as e:
@@ -119,16 +103,7 @@ async def get_current_user(authorization: Optional[str] = Header(None)):
     if not authorization:
         raise HTTPException(status_code=401, detail="Unauthorized: Bearer token required")
 
-    return {
-        "id": "user_123",
-        "email": "oradanigrindr@gmail.com",
-        "name": "Dani Grindr",
-        "avatar_url": "https://r2.cerebrocentral.com/avatars/dani.png",
-        "organizations": [
-            {"id": "org_cerebro", "name": "Cerebrocentral HQ", "role": "owner", "plan": "free"},
-            {"id": "org_edge_lab", "name": "Cloudflare Edge Labs", "role": "admin", "plan": "free"}
-        ]
-    }
+    raise HTTPException(status_code=501, detail="User session lookup is not configured")
 
 @app.post("/api/v1/auth/refresh")
 async def refresh_token(request: Request):
@@ -152,8 +127,8 @@ async def get_user(user_id: str):
     """Query user account profile by ID from D1 database"""
     return {
         "id": user_id,
-        "email": "oradanigrindr@gmail.com",
-        "name": "Dani Grindr",
+        "email": "",
+        "name": "",
         "created_at": "2024-01-15T10:20:00Z"
     }
 
@@ -163,8 +138,8 @@ async def update_user(user_id: str, request: Request):
     data = await request.json()
     return {
         "id": user_id,
-        "email": data.get("email", "oradanigrindr@gmail.com"),
-        "name": data.get("name", "Dani Grindr"),
+        "email": data.get("email", ""),
+        "name": data.get("name", ""),
         "updated_at": "2026-10-05T09:50:00Z"
     }
 
@@ -174,10 +149,7 @@ async def update_user(user_id: str, request: Request):
 async def list_organizations():
     """List workspaces associated with the current tenant"""
     return {
-        "organizations": [
-            {"id": "org_cerebro", "name": "Cerebrocentral HQ", "slug": "cerebrocentral-hq", "plan": "free"},
-            {"id": "org_edge_lab", "name": "Cloudflare Edge Labs", "slug": "edge-labs", "plan": "free"}
-        ]
+        "organizations": []
     }
 
 @app.post("/api/v1/organizations")
@@ -202,11 +174,11 @@ async def get_organization(org_id: str):
     """Retrieve details and member count for a specific organization"""
     return {
         "id": org_id,
-        "name": "Cerebrocentral HQ",
-        "slug": "cerebrocentral-hq",
-        "plan": "free",
-        "members_count": 3,
-        "created_at": "2024-01-15T10:22:00Z"
+        "name": None,
+        "slug": None,
+        "plan": None,
+        "members_count": None,
+        "created_at": None
     }
 
 # ==================== 5. MEDIA & R2 STORAGE ====================
@@ -217,14 +189,16 @@ async def upload_media(request: Request):
     try:
         # Accept JSON simulation or multipart form
         data = await request.json() if request.headers.get("content-type") == "application/json" else {}
-        filename = data.get("filename", "uploaded_file.png")
-        size = data.get("size", 245000)
+        filename = data.get("filename")
+        size = data.get("size")
+        if not filename or size is None:
+            raise HTTPException(status_code=400, detail="Missing filename or size")
 
         # In production: await env.BUCKET.put(f"media/{filename}", file_stream)
         media_id = f"media_{os.urandom(4).hex()}"
         return {
             "id": media_id,
-            "url": f"https://r2.cerebrocentral.com/{filename}",
+            "url": filename,
             "filename": filename,
             "size": size,
             "storage_path": f"uploads/{filename}",
@@ -237,11 +211,7 @@ async def upload_media(request: Request):
 async def list_media():
     """List objects in Cloudflare R2 bucket cerebrocentral"""
     return {
-        "media": [
-            {"id": "media_101", "filename": "architecture-diagram-edge.png", "url": "https://r2.cerebrocentral.com/architecture-diagram-edge.png", "size": 245890, "visibility": "public"},
-            {"id": "media_102", "filename": "d1-database-backup.sqlite", "url": "https://r2.cerebrocentral.com/d1-database-backup.sqlite", "size": 1420500, "visibility": "private"},
-            {"id": "media_103", "filename": "cloudflare-workers-benchmark.pdf", "url": "https://r2.cerebrocentral.com/cloudflare-workers-benchmark.pdf", "size": 618400, "visibility": "public"}
-        ]
+        "media": []
     }
 
 @app.get("/api/v1/media/{media_id}")
@@ -249,11 +219,11 @@ async def get_media(media_id: str):
     """Inspect metadata and signed URL for a specific R2 media object"""
     return {
         "id": media_id,
-        "filename": "architecture-diagram-edge.png",
-        "url": f"https://r2.cerebrocentral.com/architecture-diagram-edge.png",
-        "mime_type": "image/png",
-        "size": 245890,
-        "visibility": "public"
+        "filename": None,
+        "url": None,
+        "mime_type": None,
+        "size": None,
+        "visibility": None
     }
 
 @app.delete("/api/v1/media/{media_id}")

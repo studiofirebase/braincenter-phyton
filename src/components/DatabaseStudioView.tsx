@@ -146,7 +146,7 @@ export const DatabaseStudioView: React.FC<DatabaseStudioViewProps> = ({
       id: `user_${Math.random().toString(36).substring(2, 7)}`,
       email: newUserEmail,
       name: newUserName || 'Team Member',
-      avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60',
+      avatar_url: '',
       password_hash: '$2b$12$simulatedhash...',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -163,7 +163,7 @@ export const DatabaseStudioView: React.FC<DatabaseStudioViewProps> = ({
       id: `org_${Math.random().toString(36).substring(2, 7)}`,
       name: newOrgName,
       slug: newOrgSlug || newOrgName.toLowerCase().replace(/\s+/g, '-'),
-      owner_id: users[0]?.id || 'user_123',
+      owner_id: users[0]?.id || '',
       plan: 'free',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()

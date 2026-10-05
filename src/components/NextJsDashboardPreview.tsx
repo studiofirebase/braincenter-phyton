@@ -42,19 +42,6 @@ export const NextJsDashboardPreview: React.FC<NextJsDashboardPreviewProps> = ({
     setCurrentUser(null);
   };
 
-  const handleSimulateLogin = () => {
-    setToken('fake_token_123');
-    setCurrentUser({
-      id: 'user_123',
-      email: 'oradanigrindr@gmail.com',
-      name: 'Dani Grindr',
-      avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60',
-      password_hash: '***',
-      created_at: '2024-01-15',
-      updated_at: '2024-01-15'
-    });
-  };
-
   return (
     <div className="space-y-6">
       {/* Top Banner */}
@@ -108,12 +95,7 @@ export const NextJsDashboardPreview: React.FC<NextJsDashboardPreviewProps> = ({
               <span>Sign Out</span>
             </button>
           ) : (
-            <button
-              onClick={handleSimulateLogin}
-              className="px-3 py-1.5 rounded text-xs bg-orange-600 hover:bg-orange-500 text-white font-medium flex items-center gap-1.5 transition-colors"
-            >
-              <span>Sign In as Dani</span>
-            </button>
+            <span className="text-xs text-slate-500">Sem sessão autenticada</span>
           )}
         </div>
       </div>
@@ -225,7 +207,9 @@ export const NextJsDashboardPreview: React.FC<NextJsDashboardPreviewProps> = ({
               <div>
                 <h1 className="text-2xl font-bold text-white tracking-tight">Dashboard</h1>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Logged in as <span className="text-slate-200 font-mono">{currentUser?.email || 'oradanigrindr@gmail.com'}</span>
+                  {currentUser?.email
+                    ? <>Logged in as <span className="text-slate-200 font-mono">{currentUser.email}</span></>
+                    : 'No authenticated user'}
                 </p>
               </div>
 
@@ -247,7 +231,7 @@ export const NextJsDashboardPreview: React.FC<NextJsDashboardPreviewProps> = ({
                   {organizations.length}
                 </div>
                 <div className="text-[11px] text-slate-500 pt-1">
-                  Primary: {organizations[0]?.name || 'Cerebrocentral HQ'}
+                  Primary: {organizations[0]?.name || '—'}
                 </div>
               </div>
 

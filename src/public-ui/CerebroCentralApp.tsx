@@ -16,17 +16,28 @@ interface CerebroCentralAppProps {
 }
 
 export const CerebroCentralApp: React.FC<CerebroCentralAppProps> = ({ onOpenCloudConsole }) => {
-  const [currentPath, setCurrentPath] = useState<string>('/');
+  const [currentPath, setCurrentPath] = useState<string>(() =>
+    `${window.location.pathname}${window.location.search}`
+  );
   const [selectedLang, setSelectedLang] = useState<string>('pt');
+
+  useEffect(() => {
+    const handlePopState = () => setCurrentPath(`${window.location.pathname}${window.location.search}`);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Handle route navigation with browser scroll top
   const handleNavigate = (path: string) => {
+    let targetPath = path;
     // If accessing exclusive gallery without session, redirect to Face ID auth
     if (path === '/galeria-assinantes') {
-      setCurrentPath('/auth/face');
-    } else {
-      setCurrentPath(path);
+      targetPath = '/auth/face';
     }
+    if (`${window.location.pathname}${window.location.search}` !== targetPath) {
+      window.history.pushState({}, '', targetPath);
+    }
+    setCurrentPath(targetPath);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -38,10 +49,10 @@ export const CerebroCentralApp: React.FC<CerebroCentralAppProps> = ({ onOpenClou
       <div className="bg-[#12141A] border-b border-white/[0.08] px-4 py-2 text-xs font-sans flex items-center justify-between text-[#D4D9E2]">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-semibold text-white">Cérebro Central Público (UI/UX Oficial)</span>
+          <span className="font-semibold text-white">Italo Santos</span>
           <span className="hidden sm:inline text-white/40">·</span>
           <span className="hidden sm:inline text-xs text-[#D4D9E2]/70 font-mono">
-            cerebrocentral.com{currentPath}
+            italosantos.com{currentPath}
           </span>
         </div>
 
@@ -118,7 +129,7 @@ export const CerebroCentralApp: React.FC<CerebroCentralAppProps> = ({ onOpenClou
       {!isAdminRoute && (
         <>
           <CookieBanner onNavigate={handleNavigate} />
-          <FloatingShortcuts />
+          <FloatingShortcuts onNavigate={handleNavigate} />
           <WelcomeModal />
         </>
       )}

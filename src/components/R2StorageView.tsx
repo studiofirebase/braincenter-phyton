@@ -83,8 +83,8 @@ export const R2StorageView: React.FC<R2StorageViewProps> = ({
 
       const newMedia: D1Media = {
         id: `media_${Math.random().toString(36).substring(2, 7)}`,
-        organization_id: 'org_cerebro',
-        uploaded_by: 'user_123',
+        organization_id: '',
+        uploaded_by: '',
         filename: uploadFilename,
         mime_type: mime,
         size: uploadSizeKb * 1024,

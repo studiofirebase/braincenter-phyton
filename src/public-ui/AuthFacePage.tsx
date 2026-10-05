@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Camera, RefreshCw, ShieldCheck, AlertCircle, CheckCircle2, Lock } from 'lucide-react';
 
 interface AuthFacePageProps {
@@ -9,13 +9,71 @@ export const AuthFacePage: React.FC<AuthFacePageProps> = ({ onNavigate }) => {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [cameraState, setCameraState] = useState<'unavailable' | 'requesting' | 'active'>('unavailable');
   const [antiBotVerified, setAntiBotVerified] = useState(false);
+  const [cameraError, setCameraError] = useState('');
+  const [verificationMessage, setVerificationMessage] = useState('');
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
-  const handleRequestCamera = () => {
+  useEffect(() => {
+    if (videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+    }
+  }, [cameraState]);
+
+  useEffect(() => {
+    return () => {
+      const stream = streamRef.current;
+      streamRef.current = null;
+      stream?.getTracks().forEach((track) => track.stop());
+    };
+  }, []);
+
+  const handleRequestCamera = async () => {
     setCameraState('requesting');
-    setTimeout(() => {
-      // In web sandboxes without actual hardware grant, show realistic fallback
+    setCameraError('');
+    setVerificationMessage('');
+
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error('Este navegador não oferece acesso à câmera. Use uma conexão HTTPS e tente novamente.');
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { facingMode: 'user' }
+      });
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      streamRef.current = stream;
+      stream.getTracks().forEach((track) => {
+        track.addEventListener('ended', () => {
+          if (streamRef.current === stream) {
+            streamRef.current = null;
+            stream.getTracks().forEach((activeTrack) => activeTrack.stop());
+            setCameraState('unavailable');
+            setCameraError('O acesso à câmera foi encerrado. Tente novamente.');
+          }
+        });
+      });
+      setCameraState('active');
+    } catch (error) {
+      const cameraError = error as DOMException;
+      if (cameraError.name === 'NotAllowedError' || cameraError.name === 'SecurityError') {
+        setCameraError('A permissão da câmera foi negada. Autorize o acesso nas configurações do navegador.');
+      } else if (cameraError.name === 'NotFoundError' || cameraError.name === 'OverconstrainedError') {
+        setCameraError('Nenhuma câmera compatível foi encontrada neste dispositivo.');
+      } else if (cameraError.name === 'NotReadableError') {
+        setCameraError('A câmera está em uso por outro aplicativo. Feche-o e tente novamente.');
+      } else {
+        setCameraError(cameraError.message || 'Não foi possível acessar a câmera.');
+      }
       setCameraState('unavailable');
-    }, 1200);
+    }
+  };
+
+  const handleVerifyFace = () => {
+    setVerificationMessage(
+      'A câmera foi acessada, mas o reconhecimento biométrico ainda não está configurado. Nenhuma identidade foi verificada.'
+    );
   };
 
   return (
@@ -64,8 +122,7 @@ export const AuthFacePage: React.FC<AuthFacePageProps> = ({ onNavigate }) => {
                 </div>
                 <h4 className="text-base font-semibold text-white">Câmera Indisponível</h4>
                 <p className="text-xs text-[#D4D9E2]/70 font-sans max-w-xs leading-relaxed">
-                  Permita o acesso à câmera no seu navegador ou certifique-se de que nenhum outro
-                  aplicativo a esteja utilizando.
+                  {cameraError || 'Permita o acesso à câmera no navegador e confirme que ela não está sendo usada por outro aplicativo.'}
                 </p>
                 <button
                   onClick={handleRequestCamera}
@@ -82,13 +139,27 @@ export const AuthFacePage: React.FC<AuthFacePageProps> = ({ onNavigate }) => {
                 </p>
               </div>
             ) : (
-              <div className="text-center space-y-2">
-                <div className="w-48 h-48 rounded-full border-2 border-emerald-400/80 animate-pulse mx-auto flex items-center justify-center">
-                  <span className="text-xs text-emerald-400 font-sans">Posicione o rosto</span>
-                </div>
-              </div>
+              <>
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  muted
+                  playsInline
+                  aria-label="Pré-visualização da câmera"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <span className="absolute bottom-4 rounded-full bg-black/70 px-3 py-1 text-xs text-emerald-300 font-sans">
+                  Câmera ativa
+                </span>
+              </>
             )}
           </div>
+          {verificationMessage && (
+            <p role="status" className="flex items-start gap-2 text-xs font-sans text-amber-300">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              {verificationMessage}
+            </p>
+          )}
 
           {/* Anti-Bot Verification Checkbox */}
           <div className="p-4 rounded-xl bg-[#090A0C] border border-white/[0.08] flex items-center justify-between text-xs font-sans">
@@ -115,6 +186,7 @@ export const AuthFacePage: React.FC<AuthFacePageProps> = ({ onNavigate }) => {
           {/* Action Button: 60px height */}
           <button
             disabled={!antiBotVerified || cameraState !== 'active'}
+            onClick={handleVerifyFace}
             className="w-full h-[60px] rounded-[14px] bg-[#D5D9E2] hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed text-[#090A0C] font-sans font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2"
           >
             <Lock className="w-4 h-4" />

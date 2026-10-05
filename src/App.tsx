@@ -52,8 +52,8 @@ export default function App() {
   const [queuedWebhooks, setQueuedWebhooks] = useState<QueuedWebhook[]>(INITIAL_QUEUED_WEBHOOKS);
 
   // Authentication State
-  const [currentUser, setCurrentUser] = useState<D1User | null>(INITIAL_USERS[0]);
-  const [token, setToken] = useState<string | null>('fake_token_123');
+  const [currentUser, setCurrentUser] = useState<D1User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   // Deep link file target for monorepo explorer
   const [selectedFileForExplorer, setSelectedFileForExplorer] = useState<string | undefined>(undefined);

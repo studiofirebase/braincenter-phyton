@@ -73,12 +73,13 @@ export const PublicHeader: React.FC<PublicHeaderProps> = ({
           </button>
         </div>
 
-        {/* Center: Title "Cerebro Central" in serif */}
+        {/* Center: Public profile name */}
         <button
           onClick={() => handleNavClick('/')}
+          aria-label="Página inicial de Italo Santos"
           className="text-xl sm:text-2xl font-serif tracking-wide text-[#F5F7FA] hover:text-[#D4D9E2] transition-colors focus-visible:outline-hidden"
         >
-          Cerebro Central
+          Italo Santos
         </button>
 
         {/* Right: Admin Button (45x45px) & Language/Currency Selector (45x45px) */}
@@ -141,7 +142,7 @@ export const PublicHeader: React.FC<PublicHeaderProps> = ({
             <div>
               {/* Drawer Top */}
               <div className="flex items-center justify-between pb-5 border-b border-white/[0.08]">
-                <span className="text-xl tracking-wide text-[#F5F7FA]">Cérebro Central</span>
+                <span className="text-xl tracking-wide text-[#F5F7FA]">Italo Santos</span>
                 <button
                   onClick={() => setIsMenuOpen(false)}
                   aria-label="Fechar menu"

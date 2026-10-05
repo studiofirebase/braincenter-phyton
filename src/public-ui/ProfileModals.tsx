@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Search, Users, History, Check, UserCheck, Play } from 'lucide-react';
+import { X, Search, Users, History } from 'lucide-react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -40,9 +40,9 @@ export const SearchPeopleModal: React.FC<ModalProps> = ({ isOpen, onClose }) => 
 
         <div className="py-8 text-center text-[#D4D9E2]/60 text-xs space-y-1">
           {searchTerm ? (
-            <p>Nenhum perfil público encontrado para "{searchTerm}".</p>
+            <p>A busca por "{searchTerm}" não está conectada a uma fonte real de perfis.</p>
           ) : (
-            <p>Digite para buscar assinantes e membros da comunidade Cérebro Central.</p>
+            <p>A busca de perfis estará disponível quando houver dados reais conectados.</p>
           )}
         </div>
       </div>
@@ -69,43 +69,11 @@ export const FriendshipsModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex items-center justify-between text-xs text-[#D4D9E2]/70 px-1">
-            <span>Conexões Ativas (312)</span>
-            <span className="text-[#38BDF8]">Todas</span>
-          </div>
-
-          <div className="divide-y divide-white/[0.06] border border-white/[0.08] rounded-xl overflow-hidden bg-[#090A0C]">
-            <div className="p-3 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-400 font-bold flex items-center justify-center">
-                  CC
-                </div>
-                <div>
-                  <div className="font-semibold text-[#F5F7FA]">Cérebro Central Oficial</div>
-                  <div className="text-[11px] text-[#D4D9E2]/50 font-sans">@cerebrocentral</div>
-                </div>
-              </div>
-              <span className="text-[10px] font-sans px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/40">
-                Amigo
-              </span>
-            </div>
-
-            <div className="p-3 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-blue-500/20 text-[#38BDF8] font-bold flex items-center justify-center">
-                  DG
-                </div>
-                <div>
-                  <div className="font-semibold text-[#F5F7FA]">Dani Grindr</div>
-                  <div className="text-[11px] text-[#D4D9E2]/50 font-sans">@danigrindr</div>
-                </div>
-              </div>
-              <span className="text-[10px] font-sans px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/40">
-                Amigo
-              </span>
-            </div>
-          </div>
+        <div className="py-8 text-center text-xs text-[#D4D9E2]/60">
+          <p>As conexões reais ainda não estão disponíveis.</p>
+          <p className="mt-1 text-[11px] text-[#D4D9E2]/40">
+            Nenhum amigo ou contagem fictícia é exibido.
+          </p>
         </div>
       </div>
     </div>
@@ -132,63 +100,10 @@ export const VisitedProfilesModal: React.FC<ModalProps> = ({ isOpen, onClose }) 
         </div>
 
         <div className="p-6 text-center text-[#D4D9E2]/60 text-xs font-sans space-y-1">
-          <p>Seu histórico de visitas de perfil está limpo.</p>
+          <p>O histórico de visitas não está conectado.</p>
           <p className="text-[11px] text-[#D4D9E2]/40">
-            A navegação anônima protege a sua privacidade em todas as sessões.
+            Não há dados de visitas para exibir.
           </p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export const StoriesModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md font-serif">
-      <div className="relative w-full max-w-sm h-[600px] bg-[#12141A] border border-[#343944] rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between p-4">
-        {/* Progress Bar */}
-        <div className="w-full h-1 bg-white/20 rounded-full overflow-hidden mb-3">
-          <div className="h-full bg-white animate-[marquee_5s_linear_infinite]" style={{ width: '100%' }} />
-        </div>
-
-        {/* Story Header */}
-        <div className="flex items-center justify-between z-10">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-slate-800">
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-                alt="Avatar"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-white">Cérebro Central</div>
-              <div className="text-[10px] text-[#D4D9E2]/70 font-sans">Há 2 horas</div>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Story Media Artwork */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <img
-            src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80"
-            alt="Status Cérebro Central"
-            className="w-full h-full object-cover opacity-80"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
-        </div>
-
-        {/* Story Caption */}
-        <div className="z-10 p-2 text-center text-sm text-white font-serif drop-shadow-md">
-          "Novos ensaios e produções exclusivas disponíveis esta semana no Cérebro Central."
         </div>
       </div>
     </div>

@@ -21,7 +21,7 @@ class ApiClient {
 
   constructor() {
     if (typeof window !== 'undefined') {
-      this.token = localStorage.getItem('cc_auth_token') || 'valid_admin_token_xyz987';
+      this.token = localStorage.getItem('cc_auth_token');
     }
   }
 
@@ -172,7 +172,7 @@ class ApiClient {
     });
   }
 
-  async triggerWhatsAppWebhook(payload: Record<string, any> = { message: 'Mensagem de teste do cliente' }) {
+  async triggerWhatsAppWebhook(payload: Record<string, any>) {
     return this.request('/api/v1/webhooks/whatsapp', {
       method: 'POST',
       body: JSON.stringify(payload)
@@ -204,7 +204,6 @@ class ApiClient {
       },
       { name: '/api/v1/integrations', method: 'GET', fn: () => this.getIntegrations() },
       { name: '/api/v1/webhooks/stripe', method: 'POST', fn: () => this.triggerStripeWebhook() },
-      { name: '/api/v1/webhooks/whatsapp', method: 'POST', fn: () => this.triggerWhatsAppWebhook() },
       { name: '/api/v1/webhooks/instagram', method: 'POST', fn: () => this.triggerInstagramWebhook() }
     ];
 

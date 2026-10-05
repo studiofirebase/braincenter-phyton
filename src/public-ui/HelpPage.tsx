@@ -1,11 +1,14 @@
 import React from 'react';
-import { HelpCircle, Mail, MessageSquare, Shield, Info } from 'lucide-react';
+import { HelpCircle, Mail, Shield, Info } from 'lucide-react';
 
 interface HelpPageProps {
   onNavigate: (path: string) => void;
 }
 
 export const HelpPage: React.FC<HelpPageProps> = ({ onNavigate }) => {
+  const supportEmail = import.meta.env.VITE_PUBLIC_SUPPORT_EMAIL?.trim();
+  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER?.replace(/\D/g, '');
+
   return (
     <div className="w-full min-h-[calc(100vh-59px-200px)] bg-[#090A0C] font-serif py-12 px-4 sm:px-8">
       <div className="max-w-[1000px] mx-auto space-y-8">
@@ -23,8 +26,9 @@ export const HelpPage: React.FC<HelpPageProps> = ({ onNavigate }) => {
         <div className="bg-[#12141A] border border-[#343944] rounded-[20px] p-6 sm:p-8 space-y-3 shadow-xl">
           <h2 className="text-2xl sm:text-[35px] font-semibold text-[#F5F7FA]">Atendimento</h2>
           <p className="text-base sm:text-[20px] text-[#D4D9E2]/80 leading-relaxed font-serif">
-            Nosso suporte técnico opera em regime prioritário para membros e assinantes ativos.
-            Dúvidas sobre faturamento, cancelamento e acesso podem ser tratadas por live chat ou e-mail.
+            {supportEmail || whatsappNumber
+              ? 'Use somente os canais de contato configurados e exibidos abaixo.'
+              : 'Nenhum canal de atendimento está configurado neste ambiente. Não há chat simulado.'}
           </p>
         </div>
 
@@ -60,7 +64,7 @@ export const HelpPage: React.FC<HelpPageProps> = ({ onNavigate }) => {
             </li>
             <li className="flex items-start gap-3">
               <span className="text-[#38BDF8] select-none font-bold">·</span>
-              <span><strong>Suporte Direto:</strong> Atendimento via Live Chat integrado e canal dedicado no WhatsApp para resolução imediata.</span>
+              <span><strong>Suporte Direto:</strong> Canais de contato serão exibidos somente quando configurados.</span>
             </li>
           </ul>
         </div>
@@ -69,8 +73,22 @@ export const HelpPage: React.FC<HelpPageProps> = ({ onNavigate }) => {
         <div className="bg-[#12141A] border border-[#343944] rounded-[20px] p-6 sm:p-8 space-y-3 shadow-xl">
           <h2 className="text-2xl sm:text-[35px] font-semibold text-[#F5F7FA]">Contato</h2>
           <p className="text-base sm:text-[20px] text-[#D4D9E2]/80 leading-relaxed font-serif">
-            E-mail institucional: <code className="text-[#38BDF8] font-sans text-sm">suporte@cerebrocentral.com</code>.
-            Tempo médio de resposta de até 24 horas úteis.
+            {supportEmail && (
+              <a href={`mailto:${supportEmail}`} className="inline-flex items-center gap-2 text-[#38BDF8] hover:underline">
+                <Mail className="h-4 w-4" /> {supportEmail}
+              </a>
+            )}
+            {whatsappNumber && (
+              <a
+                href={`https://wa.me/${whatsappNumber}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 flex items-center gap-2 text-[#38BDF8] hover:underline"
+              >
+                <Info className="h-4 w-4" /> WhatsApp configurado
+              </a>
+            )}
+            {!supportEmail && !whatsappNumber && 'Nenhum contato público foi conectado.'}
           </p>
         </div>
       </div>

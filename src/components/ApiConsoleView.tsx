@@ -49,7 +49,7 @@ export const ApiConsoleView: React.FC<ApiConsoleViewProps> = ({
   const [requestBodyText, setRequestBodyText] = useState<string>(
     JSON.stringify(selectedEndpoint.defaultBody || {}, null, 2)
   );
-  const [urlParamVal, setUrlParamVal] = useState<string>('user_123');
+  const [urlParamVal, setUrlParamVal] = useState<string>('');
 
   // Response state
   const [isExecuting, setIsExecuting] = useState(false);
@@ -70,7 +70,7 @@ export const ApiConsoleView: React.FC<ApiConsoleViewProps> = ({
     setRequestBodyText(JSON.stringify(ep.defaultBody || {}, null, 2));
     if (ep.defaultParams) {
       const firstVal = Object.values(ep.defaultParams)[0];
-      setUrlParamVal(firstVal || 'user_123');
+      setUrlParamVal(firstVal || '');
     }
     setResponseStatus(null);
     setResponseBody(null);
@@ -121,27 +121,8 @@ export const ApiConsoleView: React.FC<ApiConsoleViewProps> = ({
               status = 400;
               body = { error: 'Missing email or password', status: 400 };
             } else {
-              const newToken = `cf_jwt_${Math.random().toString(36).substring(2, 14)}`;
-              const loggedUser: D1User = {
-                id: 'user_123',
-                email: parsedBody.email,
-                name: 'Dani Grindr',
-                avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60',
-                password_hash: '***encrypted***',
-                created_at: '2024-01-15 10:20:00',
-                updated_at: new Date().toISOString()
-              };
-              setToken(newToken);
-              setCurrentUser(loggedUser);
-              body = {
-                access_token: newToken,
-                token_type: 'bearer',
-                user: {
-                  id: loggedUser.id,
-                  email: loggedUser.email,
-                  name: loggedUser.name
-                }
-              };
+              status = 501;
+              body = { error: 'Authentication is available only through the configured API.', status };
             }
             break;
 
@@ -156,23 +137,24 @@ export const ApiConsoleView: React.FC<ApiConsoleViewProps> = ({
               status = 401;
               body = { error: 'Unauthorized: missing Bearer token', status: 401 };
             } else {
-              body = {
-                id: currentUser?.id || 'user_123',
-                email: currentUser?.email || 'oradanigrindr@gmail.com',
-                name: currentUser?.name || 'Dani Grindr',
-                organizations: organizations.map((o) => ({ id: o.id, name: o.name, role: 'owner' }))
-              };
+              body = currentUser
+                ? {
+                    id: currentUser.id,
+                    email: currentUser.email,
+                    name: currentUser.name,
+                    organizations: organizations.map((o) => ({ id: o.id, name: o.name, role: 'owner' }))
+                  }
+                : { error: 'Authenticated user data is unavailable.' };
+              if (!currentUser) status = 404;
             }
             break;
 
           case '/api/v1/users/{user_id}':
             if (selectedEndpoint.method === 'GET') {
-              body = {
-                id: urlParamVal,
-                email: currentUser?.email || 'oradanigrindr@gmail.com',
-                name: currentUser?.name || 'Dani Grindr',
-                verified: true
-              };
+              body = currentUser?.id === urlParamVal
+                ? { ...currentUser }
+                : { error: 'User was not found.' };
+              if (!currentUser || currentUser.id !== urlParamVal) status = 404;
             } else if (selectedEndpoint.method === 'PUT') {
               if (currentUser) {
                 const updated = {
@@ -188,11 +170,8 @@ export const ApiConsoleView: React.FC<ApiConsoleViewProps> = ({
                   updated_at: new Date().toISOString()
                 };
               } else {
-                body = {
-                  id: urlParamVal,
-                  email: parsedBody.email || 'updated@domain.com',
-                  name: parsedBody.name || 'Updated User'
-                };
+                status = 404;
+                body = { error: 'User was not found.' };
               }
             }
             break;
@@ -208,11 +187,16 @@ export const ApiConsoleView: React.FC<ApiConsoleViewProps> = ({
                 }))
               };
             } else if (selectedEndpoint.method === 'POST') {
+              if (!parsedBody.name || !currentUser) {
+                status = currentUser ? 400 : 401;
+                body = { error: currentUser ? 'Organization name is required.' : 'Authentication required.' };
+                break;
+              }
               const newOrg: D1Organization = {
                 id: `org_${Math.random().toString(36).substring(2, 7)}`,
-                name: parsedBody.name || 'New Organization',
-                slug: parsedBody.slug || 'new-org',
-                owner_id: currentUser?.id || 'user_123',
+                name: parsedBody.name,
+                slug: parsedBody.slug || String(parsedBody.name).toLowerCase().replace(/\s+/g, '-'),
+                owner_id: currentUser.id,
                 plan: (parsedBody.plan as any) || 'free',
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
@@ -230,8 +214,8 @@ export const ApiConsoleView: React.FC<ApiConsoleViewProps> = ({
           case '/api/v1/media/upload':
             const newMedia: D1Media = {
               id: `media_${Math.random().toString(36).substring(2, 6)}`,
-              organization_id: organizations[0]?.id || 'org_cerebro',
-              uploaded_by: currentUser?.id || 'user_123',
+              organization_id: organizations[0]?.id || '',
+              uploaded_by: currentUser?.id || '',
               filename: parsedBody.filename || 'uploaded-asset.png',
               mime_type: parsedBody.mime_type || 'image/png',
               size: Number(parsedBody.size) || 124500,
@@ -332,14 +316,10 @@ export const ApiConsoleView: React.FC<ApiConsoleViewProps> = ({
 
           case '/api/v1/organizations/{org_id}':
             const foundOrg = organizations.find((o) => o.id === urlParamVal) || organizations[0];
-            body = {
-              id: foundOrg?.id || 'org_cerebro',
-              name: foundOrg?.name || 'Cerebrocentral HQ',
-              slug: foundOrg?.slug || 'cerebrocentral-hq',
-              plan: foundOrg?.plan || 'free',
-              members_count: 3,
-              created_at: foundOrg?.created_at || '2024-01-15T10:22:00Z'
-            };
+            body = foundOrg
+              ? { ...foundOrg, members_count: organizations.filter((org) => org.id === foundOrg.id).length }
+              : { error: 'Organization was not found.' };
+            if (!foundOrg) status = 404;
             break;
 
           case '/api/v1/media/{media_id}':
@@ -348,14 +328,17 @@ export const ApiConsoleView: React.FC<ApiConsoleViewProps> = ({
               body = { message: `Object ${urlParamVal} deleted successfully from R2` };
             } else {
               const foundMedia = mediaList.find((m) => m.id === urlParamVal) || mediaList[0];
-              body = {
-                id: foundMedia?.id || 'media_101',
-                filename: foundMedia?.filename || 'architecture-diagram-edge.png',
-                url: `https://r2.cerebrocentral.com/${foundMedia?.filename || 'file.png'}`,
-                mime_type: foundMedia?.mime_type || 'image/png',
-                size: foundMedia?.size || 245890,
-                visibility: foundMedia?.visibility || 'public'
-              };
+              body = foundMedia
+                ? {
+                    id: foundMedia.id,
+                    filename: foundMedia.filename,
+                    url: `https://r2.cerebrocentral.com/${foundMedia.filename}`,
+                    mime_type: foundMedia.mime_type,
+                    size: foundMedia.size,
+                    visibility: foundMedia.visibility
+                  }
+                : { error: 'Media item was not found.' };
+              if (!foundMedia) status = 404;
             }
             break;
 
